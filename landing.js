@@ -713,3 +713,9 @@ document.addEventListener('DOMContentLoaded', () => {
     document.body.style.overflow = 'hidden';
   }
 });
+
+window.toggleTheme = toggleTheme;
+window.setLang = setLang;
+window.openAuth = openAuth;
+window.closeAuth = closeAuth;
+window.toggleMobileMenu = toggleMobileMenu;
