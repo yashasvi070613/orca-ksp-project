@@ -257,28 +257,60 @@ function showStep(index) {
 function positionTooltip(target, position) {
   const tooltip = document.getElementById('spotlight-tooltip');
   const rect = target.getBoundingClientRect();
-  const tip = { w: 280, h: 200 }; // approx tooltip size
-  const gap = 18;
+  const gap = 16;
+  const margin = 12; // min distance from any viewport edge
 
-  // Reset
+  // Reset all sides and transform first
   tooltip.style.top = tooltip.style.left = tooltip.style.right = tooltip.style.bottom = 'auto';
+  tooltip.style.transform = '';
+
+  // Measure actual tooltip size after a paint tick, but we need to position
+  // synchronously — use the CSS width (280px) and estimate height
+  const TW = 280;
+  const TH = tooltip.offsetHeight || 210;
+  const VW = window.innerWidth;
+  const VH = window.innerHeight;
+
+  let top, left;
 
   if (position === 'right') {
-    tooltip.style.top  = Math.max(16, rect.top + rect.height / 2 - tip.h / 2) + 'px';
-    tooltip.style.left = (rect.right + gap) + 'px';
+    // Prefer right of target; vertically centred on it
+    left = rect.right + gap;
+    top  = rect.top + rect.height / 2 - TH / 2;
+
+    // If it overflows right edge, flip to left of target
+    if (left + TW > VW - margin) {
+      left = rect.left - TW - gap;
+    }
   } else if (position === 'left') {
-    tooltip.style.top   = Math.max(16, rect.top + rect.height / 2 - tip.h / 2) + 'px';
-    tooltip.style.right = (window.innerWidth - rect.left + gap) + 'px';
+    left = rect.left - TW - gap;
+    top  = rect.top + rect.height / 2 - TH / 2;
+
+    // If it overflows left edge, flip to right
+    if (left < margin) {
+      left = rect.right + gap;
+    }
   } else if (position === 'above-bubble') {
-    // Tooltip appears above and to the left of the chat bubble
-    tooltip.style.bottom = (window.innerHeight - rect.top + gap) + 'px';
-    tooltip.style.right  = (window.innerWidth - rect.right - tip.w / 2 + rect.width / 2) + 'px';
+    // Above and horizontally centred on the bubble button
+    left = rect.left + rect.width / 2 - TW / 2;
+    top  = rect.top - TH - gap;
+
+    // If it goes above the top, place below instead
+    if (top < margin) {
+      top = rect.bottom + gap;
+    }
   } else {
-    // fallback: center
-    tooltip.style.top  = '50%';
-    tooltip.style.left = '50%';
-    tooltip.style.transform = 'translate(-50%, -50%)';
+    // Centred fallback
+    left = VW / 2 - TW / 2;
+    top  = VH / 2 - TH / 2;
   }
+
+  // Clamp both axes so tooltip never leaves the viewport
+  left = Math.min(Math.max(margin, left), VW - TW - margin);
+  top  = Math.min(Math.max(margin, top),  VH - TH - margin);
+
+  tooltip.style.left = left + 'px';
+  tooltip.style.top  = top  + 'px';
 }
 
 function nextStep() {
