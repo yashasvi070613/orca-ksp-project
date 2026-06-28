@@ -603,7 +603,25 @@
   <!-- ══════════════════════════════════════
        CHAT BUBBLE
   ══════════════════════════════════════ -->
-  <script type="module" src="dashboard.js"></script>
+  <script>
+function nextTourStep() {
+  const overlay = document.getElementById('tour-overlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+    overlay.classList.remove('active');
+  }
+  localStorage.setItem('orca-toured', 'true');
+}
+function endTour() {
+  const overlay = document.getElementById('tour-overlay');
+  if (overlay) {
+    overlay.style.display = 'none';
+    overlay.classList.remove('active');
+  }
+  localStorage.setItem('orca-toured', 'true');
+}
+</script>
+<script type="module" src="dashboard.js"></script>
   <script src="https://console.catalyst.zoho.in/convokraft/assets/js/convokraft-chat-sdk.js"></script>
 <style>
   div.anchor_convokraft_toBottom {
