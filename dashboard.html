@@ -603,58 +603,19 @@
   <!-- ══════════════════════════════════════
        CHAT BUBBLE
   ══════════════════════════════════════ -->
-  <div class="chat-bubble-tooltip" id="bubble-tooltip">
-    💬 Ask O.R.C.A AI anything!
-  </div>
-
-  <button class="chat-bubble-btn" id="chat-bubble" onclick="toggleChatWindow()" id="tour-bubble">
-    <div class="chat-bubble-badge" id="bubble-badge">1</div>
-    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-      <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
-    </svg>
-  </button>
-
-  <!-- ══════════════════════════════════════
-       CHAT WINDOW
-  ══════════════════════════════════════ -->
-  <div class="chat-window" id="chat-window">
-    <div class="chat-win-header">
-      <div class="chat-win-avatar">🤖</div>
-      <div class="chat-win-info">
-        <h4>O.R.C.A AI Assistant</h4>
-        <span><span class="online-dot"></span> Online · EN · हि · ಕ</span>
-      </div>
-      <button class="chat-win-close" onclick="toggleChatWindow()">✕</button>
-    </div>
-
-    <div class="chat-win-messages" id="win-messages">
-      <div class="chat-msg bot">
-        <div class="chat-msg-label">O.R.C.A AI</div>
-        Namaskara! 👋 I'm your crime intelligence assistant. Ask me about crime patterns, hotspots, suspect networks, or statistics across Karnataka's 1100+ police stations — in English, Hindi, or Kannada.
-      </div>
-    </div>
-
-    <div class="chat-win-suggestions" id="win-suggestions">
-      <span class="chip" onclick="sendChip(this)">Theft hotspots in Bengaluru</span>
-      <span class="chip" onclick="sendChip(this)">Crime trends 2024</span>
-      <span class="chip" onclick="sendChip(this)">ಅಪರಾಧ ಮಾದರಿ ತೋರಿಸಿ</span>
-    </div>
-
-    <div class="chat-win-input">
-      <input 
-        type="text" 
-        id="win-chat-input" 
-        placeholder="Ask in English, Hindi or Kannada..."
-        onkeydown="if(event.key==='Enter') winSendChat()"
-      />
-      <button class="win-send-btn" onclick="winSendChat()" id="win-send-btn">
-        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-          <path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/>
-        </svg>
-      </button>
-    </div>
-  </div>
-
   <script type="module" src="dashboard.js"></script>
+  <script src="https://console.catalyst.zoho.in/convokraft/assets/js/convokraft-chat-sdk.js"></script>
+<style>
+  div.anchor_convokraft_toBottom {
+    width: 330px;
+    height: 450px;
+    position: fixed;
+    bottom: 0;
+    right: 0;
+  }
+</style>
+<div class="anchor_convokraft_toBottom">
+  <convokraft-chat-bot bot-name="orcaassistant" project-id="42402000000030001" org-id="60075642287"></convokraft-chat-bot>
+</div>
 </body>
 </html>
