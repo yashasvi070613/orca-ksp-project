@@ -21,35 +21,7 @@ let isChatOpen = false;
 let isTyping = false;
 let currentTheme = localStorage.getItem('orca-dash-theme') || 'light';
 
-// ── Tour Steps ─────────────────────────────────────────────────
-const tourSteps = [
-  {
-    target: 'tour-sidebar',
-    title: 'Welcome to O.R.C.A 👋',
-    desc: 'This is your crime intelligence dashboard. Use the sidebar to navigate between Overview, Crime Maps, Network Analysis, and Reports.',
-    position: 'right'
-  },
-  {
-    target: 'tour-metrics',
-    title: 'Live Crime Metrics 📊',
-    desc: 'These cards show real-time statistics — active cases, critical alerts, deployed officers, and your AI query count for this session.',
-    position: 'bottom'
-  },
-  {
-    target: 'tour-table',
-    title: 'Recent Crime Logs 📋',
-    desc: 'View the latest FIR entries from all 1100+ police stations across Karnataka, filterable by category, location, and status.',
-    position: 'top'
-  },
-  {
-    target: 'chat-bubble',
-    title: 'Your AI Assistant 🤖',
-    desc: 'Click this bubble anytime to chat with O.R.C.A AI! Ask questions in English, Hindi, or Kannada to query crime data, find hotspots, and analyze patterns.',
-    position: 'top-left'
-  }
-];
-
-let currentStep = 0;
+// Tour disabled for now
 
 // ── Init ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
@@ -62,11 +34,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const emailEl = document.getElementById('user-email');
       if (emailEl) emailEl.textContent = user.email;
 
-      // Start tour for first-time users
-      const toured = localStorage.getItem('orca-toured');
-      if (!toured) {
-        setTimeout(() => startTour(), 800);
-      }
+      // Tour disabled for now
     }
   });
 
@@ -86,127 +54,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }, 4000);
 });
 
-// ══════════════════════════════════════
-// ONBOARDING TOUR
-// ══════════════════════════════════════
-function startTour() {
-  currentStep = 0;
-  const overlay = document.getElementById('tour-overlay');
-  overlay.classList.add('active');
-  buildDots();
-  showTourStep(0);
-}
-
-function buildDots() {
-  const dots = document.getElementById('tour-dots');
-  dots.innerHTML = '';
-  tourSteps.forEach((_, i) => {
-    const d = document.createElement('div');
-    d.className = 'tour-dot' + (i === 0 ? ' active' : '');
-    dots.appendChild(d);
-  });
-}
-
-function showTourStep(index) {
-  const step = tourSteps[index];
-  const target = document.getElementById(step.target);
-  if (!target) return;
-
-  const rect = target.getBoundingClientRect();
-  const padding = 8;
-
-  // Highlight
-  const hl = document.getElementById('tour-highlight');
-  hl.style.left = (rect.left - padding) + 'px';
-  hl.style.top = (rect.top - padding) + 'px';
-  hl.style.width = (rect.width + padding * 2) + 'px';
-  hl.style.height = (rect.height + padding * 2) + 'px';
-
-  // Pulse ring
-  const pulse = document.getElementById('tour-pulse');
-  const cx = rect.left + rect.width / 2;
-  const cy = rect.top + rect.height / 2;
-  pulse.style.left = (cx - 20) + 'px';
-  pulse.style.top = (cy - 20) + 'px';
-  pulse.style.width = '40px';
-  pulse.style.height = '40px';
-
-  // Tooltip position — always centered and within screen
-  const tooltip = document.getElementById('tour-tooltip');
-  const tw = 300;
-  const th = 200;
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  tooltip.style.width = tw + 'px';
-
-  let left, top;
-
-  if (step.position === 'right') {
-    left = rect.right + 20;
-    top = rect.top;
-  } else if (step.position === 'bottom') {
-    left = rect.left;
-    top = rect.bottom + 16;
-  } else if (step.position === 'top') {
-    left = rect.left;
-    top = rect.top - th - 16;
-  } else if (step.position === 'top-left') {
-    left = rect.left - tw - 20;
-    top = rect.top - th;
-  } else {
-    left = vw / 2 - tw / 2;
-    top = vh / 2 - th / 2;
-  }
-
-  // Clamp within viewport
-  left = Math.max(16, Math.min(left, vw - tw - 16));
-  top = Math.max(16, Math.min(top, vh - th - 16));
-
-  tooltip.style.left = left + 'px';
-  tooltip.style.top = top + 'px';
-
-  // Content
-  document.getElementById('tour-step-label').textContent = `Step ${index + 1} of ${tourSteps.length}`;
-  document.getElementById('tour-title').textContent = step.title;
-  document.getElementById('tour-desc').textContent = step.desc;
-
-  // Dots
-  document.querySelectorAll('.tour-dot').forEach((d, i) => {
-    d.classList.toggle('active', i === index);
-  });
-
-  // Last step button
-  const btn = document.getElementById('tour-next-btn');
-  btn.textContent = index === tourSteps.length - 1 ? 'Get Started! 🚀' : 'Next →';
-
-  // Scroll target into view
-  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-}
-
-function nextTourStep() {
-  if (currentStep < tourSteps.length - 1) {
-    currentStep++;
-    showTourStep(currentStep);
-  } else {
-    endTour();
-  }
-}
-
-function endTour() {
-  const overlay = document.getElementById('tour-overlay');
-  overlay.classList.remove('active');
-  overlay.style.display = 'none';
-  localStorage.setItem('orca-toured', 'true');
-
-  // Open chat bubble with animation after tour ends
-  setTimeout(() => {
-    const badge = document.getElementById('bubble-badge');
-    if (badge) {
-      badge.style.display = 'flex';
-      badge.textContent = '1';
-    }
-  }, 500);
-}
+// Tour functions removed — to be re-added later
 
 // ══════════════════════════════════════
 // CHAT BUBBLE & WINDOW
@@ -325,5 +173,3 @@ window.toggleChatWindow = toggleChatWindow;
 window.winSendChat = winSendChat;
 window.sendChip = sendChip;
 window.toggleDashTheme = toggleDashTheme;
-window.nextTourStep = nextTourStep;
-window.endTour = endTour;
