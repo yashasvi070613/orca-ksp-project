@@ -1,7 +1,4 @@
-/* ══════════════════════════════════════════
-   O.R.C.A Dashboard JS
-   Chat Bubble + Onboarding Spotlight
-   ══════════════════════════════════════════ */
+/* Dashboard JS — O.R.C.A */
 import { initializeApp } from 'firebase/app';
 import { getAuth, onAuthStateChanged, signOut } from 'firebase/auth';
 
@@ -19,15 +16,42 @@ const auth = getAuth(app);
 
 const CATALYST_URL = 'https://orca-60075642287.development.catalystserverless.in/server/orca-chat/';
 
-/* ── State ── */
 let queryCount = 0;
+let isChatOpen = false;
 let isTyping = false;
-let chatOpen = false;
 let currentTheme = localStorage.getItem('orca-dash-theme') || 'light';
 
-/* ════════════════════════════════════════
-   INIT
-   ════════════════════════════════════════ */
+// ── Tour Steps ─────────────────────────────────────────────────
+const tourSteps = [
+  {
+    target: 'tour-sidebar',
+    title: 'Welcome to O.R.C.A 👋',
+    desc: 'This is your crime intelligence dashboard. Use the sidebar to navigate between Overview, Crime Maps, Network Analysis, and Reports.',
+    position: 'right'
+  },
+  {
+    target: 'tour-metrics',
+    title: 'Live Crime Metrics 📊',
+    desc: 'These cards show real-time statistics — active cases, critical alerts, deployed officers, and your AI query count for this session.',
+    position: 'bottom'
+  },
+  {
+    target: 'tour-table',
+    title: 'Recent Crime Logs 📋',
+    desc: 'View the latest FIR entries from all 1100+ police stations across Karnataka, filterable by category, location, and status.',
+    position: 'top'
+  },
+  {
+    target: 'chat-bubble',
+    title: 'Your AI Assistant 🤖',
+    desc: 'Click this bubble anytime to chat with O.R.C.A AI! Ask questions in English, Hindi, or Kannada to query crime data, find hotspots, and analyze patterns.',
+    position: 'top-left'
+  }
+];
+
+let currentStep = 0;
+
+// ── Init ──────────────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
   applyTheme(currentTheme);
 
@@ -35,62 +59,171 @@ document.addEventListener('DOMContentLoaded', () => {
     if (!user) {
       window.location.href = 'login.html';
     } else {
-      const el = document.getElementById('user-email');
-      if (el) el.textContent = user.email;
+      const emailEl = document.getElementById('user-email');
+      if (emailEl) emailEl.textContent = user.email;
+
+      // Start tour for first-time users
+      const toured = localStorage.getItem('orca-toured');
+      if (!toured) {
+        setTimeout(() => startTour(), 800);
+      }
     }
   });
 
-  document.getElementById('logout-btn')?.addEventListener('click', (e) => {
-    e.preventDefault();
-    signOut(auth).then(() => { window.location.href = 'login.html'; });
-  });
+  const logoutBtn = document.querySelector('.logout-btn');
+  if (logoutBtn) {
+    logoutBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      signOut(auth).then(() => { window.location.href = 'login.html'; });
+    });
+  }
 
-  // Auto-dismiss tooltip after 5 s
+  // Hide bubble tooltip after 4s
   setTimeout(() => {
-    document.getElementById('bubble-tooltip')?.classList.add('hidden');
-  }, 5000);
-
-  // Always show onboarding (remove this comment and restore the localStorage check when ready for production)
-  setTimeout(startOnboarding, 900);
+    const t = document.getElementById('bubble-tooltip');
+    if (t) t.style.opacity = '0';
+    setTimeout(() => { if (t) t.style.display = 'none'; }, 400);
+  }, 4000);
 });
 
-/* ════════════════════════════════════════
-   CHAT BUBBLE
-   ════════════════════════════════════════ */
-function toggleChat() {
-  chatOpen = !chatOpen;
+// ══════════════════════════════════════
+// ONBOARDING TOUR
+// ══════════════════════════════════════
+function startTour() {
+  currentStep = 0;
+  const overlay = document.getElementById('tour-overlay');
+  overlay.classList.add('active');
+  buildDots();
+  showTourStep(0);
+}
 
-  const wrapper = document.getElementById('chat-bubble-wrapper');
-  const panel   = document.getElementById('chat-panel');
-  const badge   = document.getElementById('bubble-badge');
-  const tooltip = document.getElementById('bubble-tooltip');
+function buildDots() {
+  const dots = document.getElementById('tour-dots');
+  dots.innerHTML = '';
+  tourSteps.forEach((_, i) => {
+    const d = document.createElement('div');
+    d.className = 'tour-dot' + (i === 0 ? ' active' : '');
+    dots.appendChild(d);
+  });
+}
 
-  wrapper.classList.toggle('is-open', chatOpen);
-  panel.classList.toggle('is-open', chatOpen);
+function showTourStep(index) {
+  const step = tourSteps[index];
+  const target = document.getElementById(step.target);
+  if (!target) return;
 
-  // Hide badge + tooltip once opened
-  if (chatOpen) {
-    badge?.classList.add('hidden');
-    tooltip?.classList.add('hidden');
-    setTimeout(() => document.getElementById('chat-input')?.focus(), 300);
+  const rect = target.getBoundingClientRect();
+  const padding = 8;
+
+  // Highlight
+  const hl = document.getElementById('tour-highlight');
+  hl.style.left = (rect.left - padding) + 'px';
+  hl.style.top = (rect.top - padding) + 'px';
+  hl.style.width = (rect.width + padding * 2) + 'px';
+  hl.style.height = (rect.height + padding * 2) + 'px';
+
+  // Pulse ring
+  const pulse = document.getElementById('tour-pulse');
+  const cx = rect.left + rect.width / 2;
+  const cy = rect.top + rect.height / 2;
+  pulse.style.left = (cx - 20) + 'px';
+  pulse.style.top = (cy - 20) + 'px';
+  pulse.style.width = '40px';
+  pulse.style.height = '40px';
+
+  // Tooltip position
+  const tooltip = document.getElementById('tour-tooltip');
+  tooltip.style.width = '300px';
+
+  if (step.position === 'right') {
+    tooltip.style.left = (rect.right + 20) + 'px';
+    tooltip.style.top = rect.top + 'px';
+  } else if (step.position === 'bottom') {
+    tooltip.style.left = rect.left + 'px';
+    tooltip.style.top = (rect.bottom + 16) + 'px';
+  } else if (step.position === 'top') {
+    tooltip.style.left = rect.left + 'px';
+    tooltip.style.top = (rect.top - 180) + 'px';
+  } else if (step.position === 'top-left') {
+    tooltip.style.left = (rect.left - 310) + 'px';
+    tooltip.style.top = (rect.top - 160) + 'px';
+  }
+
+  // Content
+  document.getElementById('tour-step-label').textContent = `Step ${index + 1} of ${tourSteps.length}`;
+  document.getElementById('tour-title').textContent = step.title;
+  document.getElementById('tour-desc').textContent = step.desc;
+
+  // Dots
+  document.querySelectorAll('.tour-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === index);
+  });
+
+  // Last step button
+  const btn = document.getElementById('tour-next-btn');
+  btn.textContent = index === tourSteps.length - 1 ? 'Get Started! 🚀' : 'Next →';
+
+  // Scroll target into view
+  target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+function nextTourStep() {
+  if (currentStep < tourSteps.length - 1) {
+    currentStep++;
+    showTourStep(currentStep);
+  } else {
+    endTour();
   }
 }
 
-/* ════════════════════════════════════════
-   CHAT MESSAGING
-   ════════════════════════════════════════ */
-async function sendChat() {
-  const input = document.getElementById('chat-input');
+function endTour() {
+  const overlay = document.getElementById('tour-overlay');
+  overlay.classList.remove('active');
+  overlay.style.display = 'none';
+  localStorage.setItem('orca-toured', 'true');
+
+  // Open chat bubble with animation after tour ends
+  setTimeout(() => {
+    const badge = document.getElementById('bubble-badge');
+    if (badge) {
+      badge.style.display = 'flex';
+      badge.textContent = '1';
+    }
+  }, 500);
+}
+
+// ══════════════════════════════════════
+// CHAT BUBBLE & WINDOW
+// ══════════════════════════════════════
+function toggleChatWindow() {
+  isChatOpen = !isChatOpen;
+  const win = document.getElementById('chat-window');
+  const btn = document.getElementById('chat-bubble');
+  const badge = document.getElementById('bubble-badge');
+
+  win.classList.toggle('open', isChatOpen);
+  btn.classList.toggle('open', isChatOpen);
+
+  if (isChatOpen) {
+    if (badge) badge.style.display = 'none';
+    setTimeout(() => document.getElementById('win-chat-input')?.focus(), 300);
+  }
+}
+
+// ══════════════════════════════════════
+// CHAT LOGIC
+// ══════════════════════════════════════
+async function winSendChat() {
+  const input = document.getElementById('win-chat-input');
   const message = input.value.trim();
   if (!message || isTyping) return;
 
   input.value = '';
-  appendMessage('user', message);
-  hideSuggestions();
-  showTyping();
-
+  appendWinMessage('user', message);
+  hideChips();
+  showWinTyping();
   isTyping = true;
-  document.getElementById('send-btn').disabled = true;
+  document.getElementById('win-send-btn').disabled = true;
 
   try {
     const res = await fetch(CATALYST_URL, {
@@ -99,57 +232,57 @@ async function sendChat() {
       body: JSON.stringify({ message })
     });
     const data = await res.json();
-    removeTyping();
-    appendMessage('bot', data.reply || 'No response received.');
+    removeWinTyping();
+    appendWinMessage('bot', data.reply || 'No response.');
     queryCount++;
-    const el = document.getElementById('query-count');
-    if (el) el.textContent = queryCount;
-  } catch {
-    removeTyping();
-    appendMessage('bot', '⚠️ Unable to reach O.R.C.A AI. Please check your connection.');
+    const qc = document.getElementById('query-count');
+    if (qc) qc.textContent = queryCount;
+  } catch (err) {
+    removeWinTyping();
+    appendWinMessage('bot', '⚠️ Connection error. Please try again.');
   }
 
   isTyping = false;
-  document.getElementById('send-btn').disabled = false;
-  document.getElementById('chat-input')?.focus();
+  document.getElementById('win-send-btn').disabled = false;
+  document.getElementById('win-chat-input')?.focus();
 }
 
-function appendMessage(role, text) {
-  const messages = document.getElementById('chat-messages');
+function appendWinMessage(role, text) {
+  const msgs = document.getElementById('win-messages');
   const div = document.createElement('div');
-  div.className = `msg ${role}`;
-  div.innerHTML = `<div class="msg-label">${role === 'bot' ? 'O.R.C.A AI' : 'You'}</div>${escapeHtml(text)}`;
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
+  div.className = `chat-msg ${role}`;
+  const label = role === 'bot' ? 'O.R.C.A AI' : 'You';
+  div.innerHTML = `<div class="chat-msg-label">${label}</div>${escapeHtml(text)}`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
-function showTyping() {
-  const messages = document.getElementById('chat-messages');
+function showWinTyping() {
+  const msgs = document.getElementById('win-messages');
   const div = document.createElement('div');
-  div.className = 'msg typing';
-  div.id = 'typing-indicator';
-  div.innerHTML = `<div class="msg-label">O.R.C.A AI</div><div class="typing-dots"><span></span><span></span><span></span></div>`;
-  messages.appendChild(div);
-  messages.scrollTop = messages.scrollHeight;
+  div.className = 'chat-msg bot';
+  div.id = 'win-typing';
+  div.innerHTML = `<div class="chat-msg-label">O.R.C.A AI</div><div class="typing-indicator"><span></span><span></span><span></span></div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
 }
 
-function removeTyping() {
-  document.getElementById('typing-indicator')?.remove();
+function removeWinTyping() {
+  document.getElementById('win-typing')?.remove();
 }
 
-function sendSuggestion(chip) {
-  document.getElementById('chat-input').value = chip.textContent;
-  sendChat();
+function sendChip(chip) {
+  const input = document.getElementById('win-chat-input');
+  input.value = chip.textContent;
+  winSendChat();
 }
 
-function hideSuggestions() {
-  const s = document.getElementById('suggestions');
+function hideChips() {
+  const s = document.getElementById('win-suggestions');
   if (s) s.style.display = 'none';
 }
 
-/* ════════════════════════════════════════
-   THEME
-   ════════════════════════════════════════ */
+// ── Theme ─────────────────────────────────────────────────────
 function toggleDashTheme() {
   currentTheme = currentTheme === 'light' ? 'dark' : 'light';
   applyTheme(currentTheme);
@@ -163,183 +296,6 @@ function applyTheme(theme) {
   if (btn) btn.textContent = theme === 'dark' ? '☀️' : '🌙';
 }
 
-/* ════════════════════════════════════════
-   ONBOARDING SPOTLIGHT
-   ════════════════════════════════════════ */
-
-/**
- * Each step:
- *  targetId   – element to highlight (gets .onboard-ring)
- *  title      – tooltip heading
- *  desc       – tooltip body text
- *  position   – where to place the tooltip: 'right' | 'left' | 'top' | 'above-bubble'
- */
-const STEPS = [
-  {
-    targetId: 'nav-overview',
-    title: 'Your Dashboard',
-    desc:  'This is your command centre. See live metrics, crime logs, and quick stats for Karnataka at a glance.',
-    position: 'right'
-  },
-  {
-    targetId: 'nav-maps',
-    title: 'Crime Maps',
-    desc:  'Explore geographic hotspots, filter by crime type or district, and identify emerging patterns visually.',
-    position: 'right'
-  },
-  {
-    targetId: 'chat-bubble-btn',
-    title: 'Ask the AI Assistant',
-    desc:  'This button opens your AI assistant — ask questions in English, Hindi or Kannada and get instant crime intelligence.',
-    position: 'above-bubble'
-  }
-];
-
-let currentStep = 0;
-let previousTarget = null;
-
-function startOnboarding() {
-  currentStep = 0;
-  const overlay = document.getElementById('spotlight-overlay');
-  overlay.classList.add('active');
-
-  // Build dots
-  const dotsEl = document.getElementById('spotlight-dots');
-  dotsEl.innerHTML = STEPS.map((_, i) => `<div class="dot${i === 0 ? ' active' : ''}"></div>`).join('');
-  document.getElementById('step-total').textContent = STEPS.length;
-
-  showStep(0);
-}
-
-function showStep(index) {
-  // Clean previous highlight
-  if (previousTarget) {
-    previousTarget.classList.remove('onboard-ring', 'spotlight-highlight');
-  }
-
-  const step = STEPS[index];
-  const target = document.getElementById(step.targetId);
-  if (!target) { nextStep(); return; }
-
-  // Highlight target
-  target.classList.add('onboard-ring');
-
-  // Add extra visual glow for specific elements
-  if (step.targetId === 'chat-bubble-btn') {
-    target.classList.add('spotlight-highlight');
-  } else if (step.targetId.startsWith('nav-')) {
-    target.classList.add('spotlight-highlight');
-  }
-
-  previousTarget = target;
-
-  // Update tooltip content
-  document.getElementById('step-num').textContent = index + 1;
-  document.getElementById('spotlight-title').textContent = step.title;
-  document.getElementById('spotlight-desc').textContent = step.desc;
-
-  const nextBtn = document.getElementById('spotlight-next-btn');
-  nextBtn.textContent = index === STEPS.length - 1 ? 'Get Started ✓' : 'Next →';
-
-  // Update dots
-  document.querySelectorAll('.spotlight-dots .dot').forEach((d, i) => {
-    d.classList.toggle('active', i === index);
-  });
-
-  // Position tooltip relative to target
-  positionTooltip(target, step.position);
-}
-
-function positionTooltip(target, position) {
-  const tooltip = document.getElementById('spotlight-tooltip');
-  const rect = target.getBoundingClientRect();
-  const gap = 16;
-  const margin = 12; // min distance from any viewport edge
-
-  // Reset all sides and transform first
-  tooltip.style.top = tooltip.style.left = tooltip.style.right = tooltip.style.bottom = 'auto';
-  tooltip.style.transform = '';
-
-  // Measure actual tooltip size after a paint tick, but we need to position
-  // synchronously — use the CSS width (280px) and estimate height
-  const TW = 280;
-  const TH = tooltip.offsetHeight || 210;
-  const VW = window.innerWidth;
-  const VH = window.innerHeight;
-
-  let top, left;
-
-  if (position === 'right') {
-    // Prefer right of target; vertically centred on it
-    left = rect.right + gap;
-    top  = rect.top + rect.height / 2 - TH / 2;
-
-    // If it overflows right edge, flip to left of target
-    if (left + TW > VW - margin) {
-      left = rect.left - TW - gap;
-    }
-  } else if (position === 'left') {
-    left = rect.left - TW - gap;
-    top  = rect.top + rect.height / 2 - TH / 2;
-
-    // If it overflows left edge, flip to right
-    if (left < margin) {
-      left = rect.right + gap;
-    }
-  } else if (position === 'above-bubble') {
-    // Above and horizontally centred on the bubble button
-    left = rect.left + rect.width / 2 - TW / 2;
-    top  = rect.top - TH - gap;
-
-    // If it goes above the top, place below instead
-    if (top < margin) {
-      top = rect.bottom + gap;
-    }
-  } else {
-    // Centred fallback
-    left = VW / 2 - TW / 2;
-    top  = VH / 2 - TH / 2;
-  }
-
-  // Clamp both axes so tooltip never leaves the viewport
-  left = Math.min(Math.max(margin, left), VW - TW - margin);
-  top  = Math.min(Math.max(margin, top),  VH - TH - margin);
-
-  tooltip.style.left = left + 'px';
-  tooltip.style.top  = top  + 'px';
-}
-
-function nextStep() {
-  if (currentStep < STEPS.length - 1) {
-    currentStep++;
-    showStep(currentStep);
-  } else {
-    endOnboarding();
-  }
-}
-
-function endOnboarding() {
-  // Clean up highlights
-  if (previousTarget) {
-    previousTarget.classList.remove('onboard-ring', 'spotlight-highlight');
-    previousTarget = null;
-  }
-
-  const overlay = document.getElementById('spotlight-overlay');
-  overlay.classList.remove('active');
-  localStorage.setItem('orca-onboarded', '1');
-
-  // After onboarding, nudge the chat bubble with a little bounce
-  setTimeout(() => {
-    const btn = document.getElementById('chat-bubble-btn');
-    btn.style.transform = 'scale(1.15)';
-    setTimeout(() => { btn.style.transform = ''; }, 300);
-  }, 400);
-}
-
-/* ════════════════════════════════════════
-   UTILS
-   ════════════════════════════════════════ */
 function escapeHtml(text) {
   return text
     .replace(/&/g, '&amp;')
@@ -348,10 +304,10 @@ function escapeHtml(text) {
     .replace(/\n/g, '<br>');
 }
 
-/* ── Expose to window (for inline handlers) ── */
-window.toggleChat      = toggleChat;
-window.sendChat        = sendChat;
-window.sendSuggestion  = sendSuggestion;
+// ── Expose ────────────────────────────────────────────────────
+window.toggleChatWindow = toggleChatWindow;
+window.winSendChat = winSendChat;
+window.sendChip = sendChip;
 window.toggleDashTheme = toggleDashTheme;
-window.nextStep        = nextStep;
-window.endOnboarding   = endOnboarding;
+window.nextTourStep = nextTourStep;
+window.endTour = endTour;
