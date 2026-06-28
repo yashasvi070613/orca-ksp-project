@@ -131,23 +131,39 @@ function showTourStep(index) {
   pulse.style.width = '40px';
   pulse.style.height = '40px';
 
-  // Tooltip position
+  // Tooltip position — always centered and within screen
   const tooltip = document.getElementById('tour-tooltip');
-  tooltip.style.width = '300px';
+  const tw = 300;
+  const th = 200;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  tooltip.style.width = tw + 'px';
+
+  let left, top;
 
   if (step.position === 'right') {
-    tooltip.style.left = (rect.right + 20) + 'px';
-    tooltip.style.top = rect.top + 'px';
+    left = rect.right + 20;
+    top = rect.top;
   } else if (step.position === 'bottom') {
-    tooltip.style.left = rect.left + 'px';
-    tooltip.style.top = (rect.bottom + 16) + 'px';
+    left = rect.left;
+    top = rect.bottom + 16;
   } else if (step.position === 'top') {
-    tooltip.style.left = rect.left + 'px';
-    tooltip.style.top = (rect.top - 180) + 'px';
+    left = rect.left;
+    top = rect.top - th - 16;
   } else if (step.position === 'top-left') {
-    tooltip.style.left = (rect.left - 310) + 'px';
-    tooltip.style.top = (rect.top - 160) + 'px';
+    left = rect.left - tw - 20;
+    top = rect.top - th;
+  } else {
+    left = vw / 2 - tw / 2;
+    top = vh / 2 - th / 2;
   }
+
+  // Clamp within viewport
+  left = Math.max(16, Math.min(left, vw - tw - 16));
+  top = Math.max(16, Math.min(top, vh - th - 16));
+
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
 
   // Content
   document.getElementById('tour-step-label').textContent = `Step ${index + 1} of ${tourSteps.length}`;
