@@ -6,7 +6,6 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
   <style>
-    /* ── DARK MODE ── */
     [data-theme="dark"] {
       --bg-base: #0d1626;
       --bg-surface: #111929;
@@ -20,9 +19,9 @@
     [data-theme="dark"] .topbar { background: #0a1020; border-color: #1e2d45; }
     [data-theme="dark"] .metric-card { background: #111929; border-color: #253147; }
     [data-theme="dark"] .data-section { background: #111929; border-color: #253147; }
-    [data-theme="dark"] .data-table th, [data-theme="dark"] .data-table td { border-color: #253147; }
+    [data-theme="dark"] .data-table th,
+    [data-theme="dark"] .data-table td { border-color: #253147; }
 
-    /* ── TOPBAR THEME BTN ── */
     .theme-btn {
       background: rgba(26,58,110,0.08);
       border: 1px solid var(--border);
@@ -31,340 +30,13 @@
       cursor: pointer;
       font-size: 1rem;
     }
-
-    /* ══════════════════════════════════════
-       CHAT BUBBLE
-
-    /* ══════════════════════════════════════
-       CHAT BUBBLE
-    ══════════════════════════════════════ */
-    .chat-bubble-btn {
-      position: fixed;
-      bottom: 28px;
-      right: 28px;
-      width: 60px;
-      height: 60px;
-      border-radius: 50%;
-      background: #1a3a6e;
-      color: #fff;
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 20px rgba(26,58,110,0.4);
-      z-index: 8000;
-      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-    }
-
-    .chat-bubble-btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 6px 28px rgba(26,58,110,0.5);
-    }
-
-    .chat-bubble-btn.open { background: #c5393b; }
-
-    .chat-bubble-badge {
-      position: absolute;
-      top: -4px; right: -4px;
-      width: 18px; height: 18px;
-      background: #ef4444;
-      border-radius: 50%;
-      font-size: 0.65rem;
-      font-weight: 700;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 2px solid #fff;
-      animation: badgePop 0.3s ease;
-    }
-
-    @keyframes badgePop {
-      0% { transform: scale(0); }
-      70% { transform: scale(1.2); }
-      100% { transform: scale(1); }
-    }
-
-    .chat-bubble-tooltip {
-      position: fixed;
-      bottom: 96px;
-      right: 28px;
-      background: #1a3a6e;
-      color: #fff;
-      padding: 10px 16px;
-      border-radius: 10px 10px 2px 10px;
-      font-size: 0.82rem;
-      font-weight: 500;
-      white-space: nowrap;
-      z-index: 7999;
-      box-shadow: 0 4px 16px rgba(0,0,0,0.15);
-      animation: tooltipFade 0.3s ease;
-    }
-
-    @keyframes tooltipFade {
-      from { opacity: 0; transform: translateY(8px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    /* ══════════════════════════════════════
-       CHAT WINDOW
-    ══════════════════════════════════════ */
-    .chat-window {
-      position: fixed;
-      bottom: 100px;
-      right: 28px;
-      width: 380px;
-      height: 520px;
-      background: var(--bg-surface, #fff);
-      border-radius: 16px;
-      box-shadow: 0 8px 48px rgba(0,0,0,0.18);
-      display: flex;
-      flex-direction: column;
-      z-index: 7998;
-      overflow: hidden;
-      transform: scale(0.85) translateY(20px);
-      opacity: 0;
-      pointer-events: none;
-      transform-origin: bottom right;
-      transition: all 0.3s cubic-bezier(0.4,0,0.2,1);
-      border: 1px solid var(--border, #d0d7e8);
-    }
-
-    .chat-window.open {
-      transform: scale(1) translateY(0);
-      opacity: 1;
-      pointer-events: all;
-    }
-
-    [data-theme="dark"] .chat-window { background: #111929; border-color: #253147; }
-
-    .chat-win-header {
-      background: linear-gradient(135deg, #1a3a6e 0%, #0f2550 100%);
-      color: #fff;
-      padding: 14px 16px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    .chat-win-avatar {
-      width: 36px; height: 36px;
-      background: rgba(255,255,255,0.15);
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
-      font-size: 1rem;
-      flex-shrink: 0;
-    }
-
-    .chat-win-info h4 {
-      margin: 0;
-      font-size: 0.9rem;
-      font-weight: 700;
-    }
-
-    .chat-win-info span {
-      font-size: 0.72rem;
-      opacity: 0.7;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .online-dot {
-      width: 6px; height: 6px;
-      background: #4ade80;
-      border-radius: 50%;
-      display: inline-block;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%,100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .chat-win-close {
-      margin-left: auto;
-      background: rgba(255,255,255,0.15);
-      border: none;
-      color: #fff;
-      width: 28px; height: 28px;
-      border-radius: 50%;
-      cursor: pointer;
-      font-size: 1rem;
-      display: grid;
-      place-items: center;
-      transition: background 0.2s;
-    }
-
-    .chat-win-close:hover { background: rgba(255,255,255,0.3); }
-
-    .chat-win-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 14px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      background: #f8fafc;
-      scroll-behavior: smooth;
-    }
-
-    [data-theme="dark"] .chat-win-messages { background: #0a1020; }
-
-    .chat-msg {
-      max-width: 85%;
-      padding: 9px 12px;
-      border-radius: 10px;
-      font-size: 0.84rem;
-      line-height: 1.55;
-      word-wrap: break-word;
-    }
-
-    .chat-msg.bot {
-      background: #fff;
-      border: 1px solid #e2e8f0;
-      align-self: flex-start;
-      border-radius: 2px 10px 10px 10px;
-      color: #0d1626;
-    }
-
-    [data-theme="dark"] .chat-msg.bot {
-      background: #1a2840;
-      border-color: #253147;
-      color: #e8edf8;
-    }
-
-    .chat-msg.user {
-      background: #1a3a6e;
-      color: #fff;
-      align-self: flex-end;
-      border-radius: 10px 10px 2px 10px;
-    }
-
-    [data-theme="dark"] .chat-msg.user { background: #3d71f5; }
-
-    .chat-msg-label {
-      font-size: 0.68rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      opacity: 0.5;
-      margin-bottom: 3px;
-    }
-
-    .typing-indicator {
-      display: flex;
-      gap: 4px;
-      align-items: center;
-      padding: 10px 12px;
-    }
-
-    .typing-indicator span {
-      width: 6px; height: 6px;
-      background: #1a3a6e;
-      border-radius: 50%;
-      animation: bounce 1.2s infinite;
-    }
-
-    [data-theme="dark"] .typing-indicator span { background: #3d71f5; }
-
-    .typing-indicator span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-indicator span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes bounce {
-      0%,60%,100% { transform: translateY(0); }
-      30% { transform: translateY(-6px); }
-    }
-
-    .chat-win-suggestions {
-      padding: 8px 12px;
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      border-top: 1px solid var(--border, #e2e8f0);
-      background: var(--bg-surface, #fff);
-      flex-shrink: 0;
-    }
-
-    [data-theme="dark"] .chat-win-suggestions { background: #111929; border-color: #253147; }
-
-    .chip {
-      background: rgba(26,58,110,0.07);
-      color: #1a3a6e;
-      border: 1px solid rgba(26,58,110,0.15);
-      border-radius: 20px;
-      padding: 4px 10px;
-      font-size: 0.74rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-
-    .chip:hover { background: #1a3a6e; color: #fff; }
-
-    [data-theme="dark"] .chip { color: #7eb0ff; border-color: rgba(61,113,245,0.3); background: rgba(61,113,245,0.08); }
-    [data-theme="dark"] .chip:hover { background: #3d71f5; color: #fff; }
-
-    .chat-win-input {
-      padding: 10px 12px;
-      border-top: 1px solid var(--border, #e2e8f0);
-      display: flex;
-      gap: 8px;
-      align-items: center;
-      background: var(--bg-surface, #fff);
-      flex-shrink: 0;
-    }
-
-    [data-theme="dark"] .chat-win-input { background: #111929; border-color: #253147; }
-
-    #win-chat-input {
-      flex: 1;
-      padding: 9px 12px;
-      border: 1px solid var(--border, #d0d7e8);
-      border-radius: 8px;
-      font: inherit;
-      font-size: 0.83rem;
-      background: var(--bg-base, #f4f6fb);
-      color: var(--text-primary, #0d1626);
-      outline: none;
-      transition: border 0.2s;
-    }
-
-    #win-chat-input:focus { border-color: #1a3a6e; }
-
-    [data-theme="dark"] #win-chat-input { background: #0a1020; border-color: #253147; color: #e8edf8; }
-
-    .win-send-btn {
-      background: #1a3a6e;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      width: 36px; height: 36px;
-      display: grid;
-      place-items: center;
-      cursor: pointer;
-      transition: background 0.2s;
-      flex-shrink: 0;
-    }
-
-    .win-send-btn:hover { background: #0f2550; }
-    .win-send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-    [data-theme="dark"] .win-send-btn { background: #3d71f5; }
   </style>
 </head>
 <body>
 
-  <!-- ══════════════════════════════════════
-       ONBOARDING TOUR
-  ══════════════════════════════════════ -->
   <div class="dashboard-layout">
     <!-- SIDEBAR -->
-    <aside class="sidebar" id="tour-sidebar">
+    <aside class="sidebar">
       <div class="brand">
         <svg width="24" height="24" viewBox="0 0 40 40" fill="none">
           <circle cx="20" cy="20" r="19" stroke="currentColor" stroke-width="2"/>
@@ -399,7 +71,7 @@
 
       <div class="content-wrapper">
         <!-- METRICS -->
-        <div class="metrics-grid" id="tour-metrics">
+        <div class="metrics-grid">
           <div class="metric-card">
             <h3>Active Cases</h3>
             <div class="value">1,248</div>
@@ -422,7 +94,7 @@
         </div>
 
         <!-- CRIME LOGS -->
-        <div class="data-section" id="tour-table">
+        <div class="data-section">
           <h2>Recent Crime Logs</h2>
           <table class="data-table">
             <thead>
@@ -459,40 +131,10 @@
     </main>
   </div>
 
-  <!-- ══════════════════════════════════════
-       CHAT BUBBLE
-  ══════════════════════════════════════ -->
-  <script>
-function nextTourStep() {
-  const overlay = document.getElementById('tour-overlay');
-  if (overlay) {
-    overlay.style.display = 'none';
-    overlay.classList.remove('active');
-  }
-  localStorage.setItem('orca-toured', 'true');
-}
-function endTour() {
-  const overlay = document.getElementById('tour-overlay');
-  if (overlay) {
-    overlay.style.display = 'none';
-    overlay.classList.remove('active');
-  }
-  localStorage.setItem('orca-toured', 'true');
-}
-</script>
-<script type="module" src="dashboard.js"></script>
+  <!-- ── ConvoKraft Widget ── -->
   <script src="https://console.catalyst.zoho.in/convokraft/assets/js/convokraft-chat-sdk.js"></script>
-<style>
-  div.anchor_convokraft_toBottom {
-    width: 330px;
-    height: 450px;
-    position: fixed;
-    bottom: 0;
-    right: 0;
-  }
-</style>
-<div class="anchor_convokraft_toBottom">
   <convokraft-chat-bot bot-name="orcaassistant" project-id="42402000000030001" org-id="60075642287"></convokraft-chat-bot>
-</div>
+
+  <script type="module" src="dashboard.js"></script>
 </body>
 </html>
