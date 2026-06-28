@@ -5,226 +5,6 @@
   <title>Dashboard — O.R.C.A</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="dashboard.css">
-  <style>
-    /* ── Chatbot Panel ── */
-    .chat-panel {
-      background: var(--bg-surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      display: flex;
-      flex-direction: column;
-      height: 520px;
-      margin-top: 2rem;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.06);
-    }
-
-    .chat-panel-header {
-      background: var(--brand-primary);
-      color: #fff;
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      flex-shrink: 0;
-    }
-
-    .chat-status-dot {
-      width: 8px; height: 8px;
-      background: #4ade80;
-      border-radius: 50%;
-      animation: pulse 2s infinite;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.4; }
-    }
-
-    .chat-panel-header h3 {
-      margin: 0;
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-
-    .chat-panel-header span {
-      margin-left: auto;
-      font-size: 0.75rem;
-      opacity: 0.7;
-    }
-
-    .chat-messages {
-      flex: 1;
-      overflow-y: auto;
-      padding: 1.25rem;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      background: #f8fafc;
-    }
-
-    [data-theme="dark"] .chat-messages {
-      background: #0f1929;
-    }
-
-    .msg {
-      max-width: 80%;
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 0.875rem;
-      line-height: 1.6;
-      word-wrap: break-word;
-    }
-
-    .msg.bot {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      align-self: flex-start;
-      border-radius: 2px 10px 10px 10px;
-    }
-
-    [data-theme="dark"] .msg.bot {
-      background: #1a2840;
-    }
-
-    .msg.user {
-      background: var(--brand-primary);
-      color: #fff;
-      align-self: flex-end;
-      border-radius: 10px 10px 2px 10px;
-    }
-
-    .msg.typing {
-      background: #ffffff;
-      border: 1px solid var(--border);
-      align-self: flex-start;
-      padding: 12px 16px;
-    }
-
-    .typing-dots span {
-      display: inline-block;
-      width: 6px; height: 6px;
-      background: var(--brand-primary);
-      border-radius: 50%;
-      margin: 0 2px;
-      animation: bounce 1.2s infinite;
-    }
-
-    .typing-dots span:nth-child(2) { animation-delay: 0.2s; }
-    .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-
-    @keyframes bounce {
-      0%, 60%, 100% { transform: translateY(0); }
-      30% { transform: translateY(-6px); }
-    }
-
-    .msg-label {
-      font-size: 0.7rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
-      opacity: 0.5;
-      margin-bottom: 4px;
-    }
-
-    .chat-input-area {
-      padding: 1rem 1.25rem;
-      border-top: 1px solid var(--border);
-      display: flex;
-      gap: 10px;
-      align-items: center;
-      background: var(--bg-surface);
-      flex-shrink: 0;
-    }
-
-    #chat-input {
-      flex: 1;
-      padding: 10px 14px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      font: inherit;
-      font-size: 0.875rem;
-      background: var(--bg-base);
-      color: var(--text-primary);
-      outline: none;
-      transition: border 0.2s;
-    }
-
-    #chat-input:focus {
-      border-color: var(--brand-primary);
-    }
-
-    .chat-send-btn {
-      background: var(--brand-primary);
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 18px;
-      font: inherit;
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: background 0.2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .chat-send-btn:hover { background: #0f2550; }
-    .chat-send-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-
-    .chat-suggestions {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding: 0.75rem 1.25rem;
-      border-top: 1px solid var(--border);
-      background: var(--bg-surface);
-    }
-
-    .suggestion-chip {
-      background: rgba(26,58,110,0.08);
-      color: var(--brand-primary);
-      border: 1px solid rgba(26,58,110,0.2);
-      border-radius: 20px;
-      padding: 5px 12px;
-      font-size: 0.78rem;
-      font-weight: 500;
-      cursor: pointer;
-      transition: all 0.2s;
-      white-space: nowrap;
-    }
-
-    .suggestion-chip:hover {
-      background: var(--brand-primary);
-      color: #fff;
-    }
-
-    /* Dark mode */
-    [data-theme="dark"] {
-      --bg-base: #0d1626;
-      --bg-surface: #111929;
-      --text-primary: #e8edf8;
-      --text-secondary: #7d8fad;
-      --border: #253147;
-      --brand-primary: #3d71f5;
-    }
-
-    [data-theme="dark"] .msg.bot { color: #e8edf8; }
-    [data-theme="dark"] .suggestion-chip { color: #7eb0ff; border-color: rgba(61,113,245,0.3); background: rgba(61,113,245,0.1); }
-    [data-theme="dark"] .suggestion-chip:hover { background: #3d71f5; color: #fff; }
-
-    /* Theme toggle in topbar */
-    .theme-btn {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
-      color: var(--text-secondary);
-      border-radius: 6px;
-      padding: 5px 10px;
-      cursor: pointer;
-      font-size: 1rem;
-    }
-  </style>
 </head>
 <body>
 
@@ -240,14 +20,14 @@
         <span>O.R.C.A</span>
       </div>
       <nav class="sidebar-nav">
-        <a href="#" class="active">🏠 Overview</a>
-        <a href="#">🗺️ Crime Maps</a>
-        <a href="#">🕸️ Network Analysis</a>
-        <a href="#">📄 Reports</a>
-        <a href="#">⚙️ Settings</a>
+        <a href="#" class="active" id="nav-overview">🏠 Overview</a>
+        <a href="#" id="nav-maps">🗺️ Crime Maps</a>
+        <a href="#" id="nav-network">🕸️ Network Analysis</a>
+        <a href="#" id="nav-reports">📄 Reports</a>
+        <a href="#" id="nav-settings">⚙️ Settings</a>
       </nav>
       <div class="sidebar-bottom">
-        <a href="#" class="logout-btn">← Logout</a>
+        <a href="#" class="logout-btn" id="logout-btn">← Logout</a>
       </div>
     </aside>
 
@@ -287,44 +67,8 @@
           </div>
         </div>
 
-        <!-- CHATBOT -->
-        <div class="chat-panel">
-          <div class="chat-panel-header">
-            <div class="chat-status-dot"></div>
-            <h3>O.R.C.A AI Assistant</h3>
-            <span>EN · हि · ಕ</span>
-          </div>
-
-          <div class="chat-messages" id="chat-messages">
-            <div class="msg bot">
-              <div class="msg-label">O.R.C.A AI</div>
-              Namaskara! I'm your O.R.C.A crime intelligence assistant. Ask me anything about crime patterns, hotspots, suspect networks, or statistics across Karnataka's 1100+ police stations. You can ask in English, Hindi, or Kannada.
-            </div>
-          </div>
-
-          <div class="chat-suggestions" id="suggestions">
-            <span class="suggestion-chip" onclick="sendSuggestion(this)">Show theft hotspots in Bengaluru</span>
-            <span class="suggestion-chip" onclick="sendSuggestion(this)">Crime trends last 6 months</span>
-            <span class="suggestion-chip" onclick="sendSuggestion(this)">ಬೆಂಗಳೂರಿನಲ್ಲಿ ಅಪರಾಧ ಮಾದರಿ</span>
-            <span class="suggestion-chip" onclick="sendSuggestion(this)">Network analysis for organised crime</span>
-          </div>
-
-          <div class="chat-input-area">
-            <input 
-              type="text" 
-              id="chat-input" 
-              placeholder="Ask anything in English, Hindi or Kannada..."
-              onkeydown="if(event.key==='Enter') sendChat()"
-            />
-            <button class="chat-send-btn" onclick="sendChat()" id="send-btn">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/></svg>
-              Send
-            </button>
-          </div>
-        </div>
-
         <!-- RECENT LOGS -->
-        <div class="data-section" style="margin-top:2rem;">
+        <div class="data-section">
           <h2>Recent Crime Logs</h2>
           <table class="data-table">
             <thead>
@@ -357,9 +101,100 @@
             </tbody>
           </table>
         </div>
-
       </div>
     </main>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       CHAT BUBBLE
+  ════════════════════════════════════════════════ -->
+  <div class="chat-bubble-wrapper" id="chat-bubble-wrapper">
+    <!-- Pulse ring (shown when closed) -->
+    <div class="bubble-pulse" id="bubble-pulse"></div>
+
+    <!-- Tooltip nudge (first visit) -->
+    <div class="bubble-tooltip" id="bubble-tooltip">
+      Ask the AI anything 👋
+    </div>
+
+    <!-- The button itself -->
+    <button class="chat-bubble-btn" id="chat-bubble-btn" onclick="toggleChat()" aria-label="Open AI Assistant">
+      <!-- Chat icon (shown when closed) -->
+      <svg class="bubble-icon-open" width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+      </svg>
+      <!-- Close icon (shown when open) -->
+      <svg class="bubble-icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <line x1="18" y1="6" x2="6" y2="18"/>
+        <line x1="6" y1="6" x2="18" y2="18"/>
+      </svg>
+      <!-- Unread dot -->
+      <span class="bubble-badge" id="bubble-badge">1</span>
+    </button>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       CHAT PANEL (floats above bubble)
+  ════════════════════════════════════════════════ -->
+  <div class="chat-panel" id="chat-panel" role="dialog" aria-label="O.R.C.A AI Assistant">
+    <div class="chat-panel-header">
+      <div class="chat-status-dot"></div>
+      <div>
+        <h3>O.R.C.A AI Assistant</h3>
+        <span class="chat-subtitle">EN · हि · ಕ · Always available</span>
+      </div>
+      <button class="chat-close-btn" onclick="toggleChat()" aria-label="Close chat">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg bot">
+        <div class="msg-label">O.R.C.A AI</div>
+        Namaskara! I'm your O.R.C.A crime intelligence assistant. Ask me anything about crime patterns, hotspots, suspect networks, or statistics across Karnataka's 1100+ police stations. You can ask in English, Hindi, or Kannada.
+      </div>
+    </div>
+
+    <div class="chat-suggestions" id="suggestions">
+      <span class="suggestion-chip" onclick="sendSuggestion(this)">Theft hotspots in Bengaluru</span>
+      <span class="suggestion-chip" onclick="sendSuggestion(this)">Crime trends last 6 months</span>
+      <span class="suggestion-chip" onclick="sendSuggestion(this)">ಬೆಂಗಳೂರಿನಲ್ಲಿ ಅಪರಾಧ</span>
+      <span class="suggestion-chip" onclick="sendSuggestion(this)">Organised crime networks</span>
+    </div>
+
+    <div class="chat-input-area">
+      <input
+        type="text"
+        id="chat-input"
+        placeholder="Ask in English, Hindi or Kannada..."
+        onkeydown="if(event.key==='Enter') sendChat()"
+      />
+      <button class="chat-send-btn" onclick="sendChat()" id="send-btn" aria-label="Send">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <!-- ═══════════════════════════════════════════════
+       ONBOARDING SPOTLIGHT OVERLAY
+  ════════════════════════════════════════════════ -->
+  <div class="spotlight-overlay" id="spotlight-overlay">
+    <div class="spotlight-backdrop" id="spotlight-backdrop"></div>
+
+    <div class="spotlight-tooltip" id="spotlight-tooltip">
+      <div class="spotlight-step-label">Getting Started · <span id="step-num">1</span> of <span id="step-total">3</span></div>
+      <h4 id="spotlight-title"></h4>
+      <p id="spotlight-desc"></p>
+      <div class="spotlight-actions">
+        <button class="spotlight-skip" onclick="endOnboarding()">Skip tour</button>
+        <button class="spotlight-next" id="spotlight-next-btn" onclick="nextStep()">Next →</button>
+      </div>
+      <div class="spotlight-dots" id="spotlight-dots"></div>
+    </div>
   </div>
 
   <script type="module" src="dashboard.js"></script>
