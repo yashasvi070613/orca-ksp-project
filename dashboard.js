@@ -50,12 +50,8 @@ document.addEventListener('DOMContentLoaded', () => {
     document.getElementById('bubble-tooltip')?.classList.add('hidden');
   }, 5000);
 
-  // Start onboarding if first visit
-  const seen = localStorage.getItem('orca-onboarded');
-  if (!seen) {
-    // Small delay so the page feels loaded first
-    setTimeout(startOnboarding, 900);
-  }
+  // Always show onboarding (remove this comment and restore the localStorage check when ready for production)
+  setTimeout(startOnboarding, 900);
 });
 
 /* ════════════════════════════════════════
