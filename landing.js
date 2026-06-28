@@ -719,3 +719,28 @@ window.setLang = setLang;
 window.openAuth = openAuth;
 window.closeAuth = closeAuth;
 window.toggleMobileMenu = toggleMobileMenu;
+
+// ── Chatbot Click — check auth then redirect ──────────────────
+import { initializeApp } from 'firebase/app';
+import { getAuth } from 'firebase/auth';
+
+const _firebaseConfig = {
+  apiKey: "AIzaSyC3Ndt8ev-6mcV4CsYVSrhwatN4iUJpogc",
+  authDomain: "orca-49591.firebaseapp.com",
+  projectId: "orca-49591",
+  storageBucket: "orca-49591.firebasestorage.app",
+  messagingSenderId: "851973313915",
+  appId: "1:851973313915:web:9bf5d3ae16bc51e8a7d9de"
+};
+
+const _app = initializeApp(_firebaseConfig, 'landing');
+const _auth = getAuth(_app);
+
+window.handleChatbotClick = function() {
+  const user = _auth.currentUser;
+  if (user) {
+    window.location.href = 'dashboard.html';
+  } else {
+    window.location.href = 'login.html';
+  }
+}
