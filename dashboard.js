@@ -164,9 +164,156 @@ async function sendMessage() {
 }
 
 // ── Expose to HTML onclick attributes ──
-window.toggleChat    = toggleChat;
+window.toggleChat     = toggleChat;
 window.sendSuggestion = sendSuggestion;
-window.sendMessage   = sendMessage;
+window.sendMessage    = sendMessage;
+
+// ── Onboarding Tour ──
+const TOUR_STORAGE_KEY = 'orca-dashboard-tour-completed';
+let tourSteps = [];
+let currentTourStep = 0;
+
+function getTourSteps() {
+  return [
+    {
+      target: '.sidebar',
+      title: 'Navigation Sidebar',
+      text: 'Use this sidebar to move between Overview, Crime Maps, Network Analysis, Reports, and Settings.'
+    },
+    {
+      target: '.metrics-grid',
+      title: 'Live Metrics',
+      text: 'These cards show key operational indicators like active cases, critical alerts, and AI query usage.'
+    },
+    {
+      target: '#crime-logs',
+      title: 'Recent Crime Logs',
+      text: 'Review recent case entries here, including category, location, and current status.'
+    },
+    {
+      target: '#chat-wrapper',
+      title: 'AI Assistant',
+      text: 'Use this assistant for fast intelligence queries, trend summaries, and actionable insights.'
+    }
+  ];
+}
+
+function createTourDots(total, activeIndex) {
+  const dotsWrap = document.getElementById('spotlight-dots');
+  if (!dotsWrap) return;
+  dotsWrap.innerHTML = '';
+  for (let i = 0; i < total; i++) {
+    const dot = document.createElement('span');
+    dot.className = `dot ${i === activeIndex ? 'active' : ''}`;
+    dotsWrap.appendChild(dot);
+  }
+}
+
+function positionTooltipNear(targetEl) {
+  const tooltip = document.getElementById('spotlight-tooltip');
+  if (!tooltip) return;
+
+  const rect = targetEl.getBoundingClientRect();
+  const pad = 14;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+
+  // default: right side
+  let top = rect.top;
+  let left = rect.right + 16;
+
+  // if no room on right, place left
+  if (left + 300 > vw - pad) left = rect.left - 300 - 16;
+  // if still overflow, clamp
+  if (left < pad) left = pad;
+
+  // if too low, clamp
+  if (top + 220 > vh - pad) top = vh - 220 - pad;
+  if (top < pad) top = pad;
+
+  tooltip.style.top = `${top}px`;
+  tooltip.style.left = `${left}px`;
+}
+
+function clearTourHighlight() {
+  document.querySelectorAll('.onboard-ring').forEach(el => el.classList.remove('onboard-ring'));
+}
+
+function renderTourStep(index) {
+  const step = tourSteps[index];
+  if (!step) return finishTour();
+
+  const targetEl = document.querySelector(step.target);
+  if (!targetEl) {
+    nextTourStep();
+    return;
+  }
+
+  clearTourHighlight();
+  targetEl.classList.add('onboard-ring');
+  targetEl.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+
+  const label = document.getElementById('spotlight-step-label');
+  const title = document.getElementById('spotlight-title');
+  const text = document.getElementById('spotlight-text');
+  const nextBtn = document.getElementById('spotlight-next-btn');
+
+  if (label) label.textContent = `Step ${index + 1} of ${tourSteps.length}`;
+  if (title) title.textContent = step.title;
+  if (text) text.textContent = step.text;
+  if (nextBtn) nextBtn.textContent = index === tourSteps.length - 1 ? 'Finish' : 'Next';
+
+  createTourDots(tourSteps.length, index);
+
+  setTimeout(() => positionTooltipNear(targetEl), 120);
+}
+
+function openTourOverlay() {
+  const overlay = document.getElementById('spotlight-overlay');
+  if (overlay) {
+    overlay.classList.add('active');
+    overlay.setAttribute('aria-hidden', 'false');
+  }
+}
+
+function closeTourOverlay() {
+  const overlay = document.getElementById('spotlight-overlay');
+  if (overlay) {
+    overlay.classList.remove('active');
+    overlay.setAttribute('aria-hidden', 'true');
+  }
+  clearTourHighlight();
+}
+
+function nextTourStep() {
+  currentTourStep += 1;
+  if (currentTourStep >= tourSteps.length) {
+    finishTour();
+  } else {
+    renderTourStep(currentTourStep);
+  }
+}
+
+function finishTour() {
+  localStorage.setItem(TOUR_STORAGE_KEY, 'true');
+  closeTourOverlay();
+}
+
+function skipTour() {
+  finishTour();
+}
+
+function startOnboarding(force = false) {
+  const completed = localStorage.getItem(TOUR_STORAGE_KEY) === 'true';
+  if (completed && !force) return;
+
+  tourSteps = getTourSteps();
+  currentTourStep = 0;
+  openTourOverlay();
+  renderTourStep(currentTourStep);
+}
+
+window.startOnboarding = startOnboarding;
 
 // ── Init ──
 document.addEventListener('DOMContentLoaded', () => {
@@ -208,6 +355,29 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     localStorage.setItem('orca-chat-tooltip-seen', 'true');
   }
+
+  // Tour controls
+  document.getElementById('spotlight-next-btn')?.addEventListener('click', nextTourStep);
+  document.getElementById('spotlight-skip-btn')?.addEventListener('click', skipTour);
+
+  document.getElementById('spotlight-overlay')?.addEventListener('click', (e) => {
+    if (e.target?.id === 'spotlight-overlay' || e.target?.id === 'spotlight-backdrop') {
+      // Optional: keep strict guided flow; do nothing on backdrop click.
+      // If you want backdrop click to skip, replace with: skipTour();
+    }
+  });
+
+  // First-time tour auto-start
+  setTimeout(() => startOnboarding(false), 600);
+
+  // Reposition tooltip on resize while tour is active
+  window.addEventListener('resize', () => {
+    const overlay = document.getElementById('spotlight-overlay');
+    if (overlay?.classList.contains('active') && tourSteps[currentTourStep]) {
+      const currentEl = document.querySelector(tourSteps[currentTourStep].target);
+      if (currentEl) positionTooltipNear(currentEl);
+    }
+  });
 });
 
 // ── Re-show tooltip manually via the "?" help button ──
