@@ -97,6 +97,31 @@
     }
     .bubble-tooltip.hidden { display: none; }
 
+    .chat-help-btn {
+      width: 26px; height: 26px;
+      border-radius: 50%;
+      background: var(--bg-surface);
+      border: 1.5px solid var(--border);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+      flex-shrink: 0;
+      align-self: flex-end;
+      margin-bottom: 2px;
+    }
+    .chat-help-btn:hover {
+      background: var(--brand-primary);
+      color: #fff;
+      border-color: var(--brand-primary);
+      transform: scale(1.08);
+    }
+    .chat-bubble-wrapper.is-open .chat-help-btn { display: none; }
+
     .chat-bubble-btn {
       width: 56px; height: 56px;
       border-radius: 50%;
@@ -457,8 +482,9 @@
 
   <!-- ── Groq Chat Bubble ── -->
   <div class="chat-bubble-wrapper" id="chat-wrapper">
-    <div class="bubble-tooltip" id="bubble-tooltip">Ask O.R.C.A AI anything 🔍</div>
+    <div class="bubble-tooltip hidden" id="bubble-tooltip">Ask O.R.C.A AI anything 🔍</div>
     <div class="bubble-pulse"></div>
+    <button class="chat-help-btn" id="chat-help-btn" onclick="showBubbleTooltip()" aria-label="Show AI assistant hint" title="What's this?">?</button>
     <button class="chat-bubble-btn" id="chat-bubble-btn" onclick="toggleChat()" aria-label="Open AI chat">
       <svg class="bubble-icon-open" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>

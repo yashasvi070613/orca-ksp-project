@@ -196,8 +196,28 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Auto-hide tooltip after 5s
-  setTimeout(() => {
-    document.getElementById('bubble-tooltip')?.classList.add('hidden');
-  }, 5000);
+  // Show tooltip only on first visit, then auto-hide after 6s
+  const hasSeenTooltip = localStorage.getItem('orca-chat-tooltip-seen');
+  if (!hasSeenTooltip) {
+    const tooltip = document.getElementById('bubble-tooltip');
+    if (tooltip) {
+      tooltip.classList.remove('hidden');
+      setTimeout(() => {
+        tooltip.classList.add('hidden');
+      }, 6000);
+    }
+    localStorage.setItem('orca-chat-tooltip-seen', 'true');
+  }
 });
+
+// ── Re-show tooltip manually via the "?" help button ──
+function showBubbleTooltip() {
+  const tooltip = document.getElementById('bubble-tooltip');
+  if (!tooltip) return;
+  tooltip.classList.remove('hidden');
+  clearTimeout(window._tooltipHideTimer);
+  window._tooltipHideTimer = setTimeout(() => {
+    tooltip.classList.add('hidden');
+  }, 5000);
+}
+window.showBubbleTooltip = showBubbleTooltip;
