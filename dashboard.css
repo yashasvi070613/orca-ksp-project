@@ -693,3 +693,16 @@ body {
 ::-webkit-scrollbar { width: 5px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
+
+.spotlight-tooltip {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+
+.onboard-ring {
+  pointer-events: none !important;
+}
+
+.spotlight-overlay {
+  pointer-events: all;
+}
