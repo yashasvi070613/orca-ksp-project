@@ -36,18 +36,10 @@
     <main class="main-content">
       <div class="emblem-bg"></div>
 
-      <!-- TOP NAVIGATION BAR -->
+      <!-- TOP BAR (no inline nav links now) -->
       <header class="topbar">
         <h1>AI Crime Intelligence Dashboard</h1>
-
-        <nav style="display:flex;align-items:center;gap:6px;margin-left:auto;margin-right:16px;">
-          <a href="#overview" style="padding:6px 12px;border-radius:6px;font-size:0.85rem;font-weight:500;color:var(--brand-primary);background:rgba(26,58,110,0.08);text-decoration:none;transition:background 0.2s;">Overview</a>
-          <a href="#crime-logs" style="padding:6px 12px;border-radius:6px;font-size:0.85rem;font-weight:500;color:var(--text-secondary);text-decoration:none;transition:background 0.2s;">Crime Logs</a>
-          <a href="#" style="padding:6px 12px;border-radius:6px;font-size:0.85rem;font-weight:500;color:var(--text-secondary);text-decoration:none;transition:background 0.2s;">Alerts</a>
-          <a href="#" style="padding:6px 12px;border-radius:6px;font-size:0.85rem;font-weight:500;color:var(--text-secondary);text-decoration:none;transition:background 0.2s;">Reports</a>
-        </nav>
-
-        <div style="display:flex;align-items:center;gap:12px;">
+        <div style="display:flex;align-items:center;gap:12px;margin-left:auto;">
           <button class="theme-btn" onclick="toggleDashTheme()" id="dash-theme-btn">🌙</button>
           <button class="theme-btn" onclick="startOnboarding(true)" id="tour-btn" title="Replay onboarding tour">🧭 Tour</button>
           <div class="user-profile" id="user-email">Loading...</div>
@@ -116,7 +108,7 @@
     </main>
   </div>
 
-  <!-- ── Groq Chat Bubble ── -->
+  <!-- Chat Bubble -->
   <div class="chat-bubble-wrapper" id="chat-wrapper">
     <div class="bubble-tooltip hidden" id="bubble-tooltip">Ask O.R.C.A AI anything 🔍</div>
     <div class="bubble-pulse"></div>
@@ -132,7 +124,7 @@
     </button>
   </div>
 
-  <!-- ── Groq Chat Panel ── -->
+  <!-- Chat Panel -->
   <div class="chat-panel" id="chat-panel">
     <div class="chat-panel-header">
       <div class="chat-status-dot"></div>
@@ -168,7 +160,7 @@
     </div>
   </div>
 
-  <!-- ── Onboarding Spotlight Overlay ── -->
+  <!-- Onboarding Overlay -->
   <div class="spotlight-overlay" id="spotlight-overlay" aria-hidden="true">
     <div class="spotlight-backdrop" id="spotlight-backdrop"></div>
     <div class="spotlight-tooltip" id="spotlight-tooltip" role="dialog" aria-live="polite">
