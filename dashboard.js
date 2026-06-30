@@ -214,25 +214,50 @@ function positionTooltipNear(targetEl) {
   if (!tooltip) return;
 
   const rect = targetEl.getBoundingClientRect();
-  const pad = 14;
+  const pad = 16;
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
-  // default: right side
-  let top = rect.top;
-  let left = rect.right + 16;
+  // Ensure tooltip has measurable size
+  tooltip.style.visibility = 'hidden';
+  tooltip.style.top = '0px';
+  tooltip.style.left = '0px';
+  tooltip.style.transform = 'none';
 
-  // if no room on right, place left
-  if (left + 300 > vw - pad) left = rect.left - 300 - 16;
-  // if still overflow, clamp
-  if (left < pad) left = pad;
+  const tRect = tooltip.getBoundingClientRect();
+  const tw = tRect.width || 280;
+  const th = tRect.height || 220;
 
-  // if too low, clamp
-  if (top + 220 > vh - pad) top = vh - 220 - pad;
-  if (top < pad) top = pad;
+  let top, left;
 
-  tooltip.style.top = `${top}px`;
+  // Prefer ABOVE target
+  if (rect.top >= th + 20) {
+    top = rect.top - th - 12;
+    left = rect.left + rect.width / 2 - tw / 2;
+  }
+  // Else BELOW target
+  else if (vh - rect.bottom >= th + 20) {
+    top = rect.bottom + 12;
+    left = rect.left + rect.width / 2 - tw / 2;
+  }
+  // Else RIGHT
+  else if (vw - rect.right >= tw + 20) {
+    top = rect.top + rect.height / 2 - th / 2;
+    left = rect.right + 12;
+  }
+  // Else LEFT
+  else {
+    top = rect.top + rect.height / 2 - th / 2;
+    left = rect.left - tw - 12;
+  }
+
+  // Clamp inside viewport
+  left = Math.max(pad, Math.min(left, vw - tw - pad));
+  top = Math.max(pad, Math.min(top, vh - th - pad));
+
   tooltip.style.left = `${left}px`;
+  tooltip.style.top = `${top}px`;
+  tooltip.style.visibility = 'visible';
 }
 
 function clearTourHighlight() {
@@ -360,13 +385,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('spotlight-next-btn')?.addEventListener('click', nextTourStep);
   document.getElementById('spotlight-skip-btn')?.addEventListener('click', skipTour);
 
-  document.getElementById('spotlight-overlay')?.addEventListener('click', (e) => {
-    if (e.target?.id === 'spotlight-overlay' || e.target?.id === 'spotlight-backdrop') {
-      // Optional: keep strict guided flow; do nothing on backdrop click.
-      // If you want backdrop click to skip, replace with: skipTour();
-    }
-  });
-
   // First-time tour auto-start
   setTimeout(() => startOnboarding(false), 600);
 
@@ -378,6 +396,15 @@ document.addEventListener('DOMContentLoaded', () => {
       if (currentEl) positionTooltipNear(currentEl);
     }
   });
+
+  // Reposition on scroll too (important for bottom-right chat step)
+  window.addEventListener('scroll', () => {
+    const overlay = document.getElementById('spotlight-overlay');
+    if (overlay?.classList.contains('active') && tourSteps[currentTourStep]) {
+      const currentEl = document.querySelector(tourSteps[currentTourStep].target);
+      if (currentEl) positionTooltipNear(currentEl);
+    }
+  }, { passive: true });
 });
 
 // ── Re-show tooltip manually via the "?" help button ──

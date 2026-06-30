@@ -706,3 +706,11 @@ body {
 .spotlight-overlay {
   pointer-events: all;
 }
+
+.spotlight-tooltip {
+  z-index: 9999 !important;
+}
+
+.spotlight-overlay {
+  overflow: hidden;
+}
