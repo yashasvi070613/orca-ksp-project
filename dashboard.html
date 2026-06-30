@@ -20,6 +20,7 @@
         </svg>
         <span>O.R.C.A</span>
       </div>
+
       <nav class="sidebar-nav">
         <a href="#" class="active">🏠 Overview</a>
         <a href="#">🗺️ Crime Maps</a>
@@ -27,6 +28,7 @@
         <a href="#">📄 Reports</a>
         <a href="#">⚙️ Settings</a>
       </nav>
+
       <div class="sidebar-bottom">
         <a href="#" class="logout-btn">← Logout</a>
       </div>
@@ -36,12 +38,10 @@
     <main class="main-content">
       <div class="emblem-bg"></div>
 
-      <!-- TOP BAR (no inline nav links now) -->
       <header class="topbar">
         <h1>AI Crime Intelligence Dashboard</h1>
         <div style="display:flex;align-items:center;gap:12px;margin-left:auto;">
           <button class="theme-btn" onclick="toggleDashTheme()" id="dash-theme-btn">🌙</button>
-          <button class="theme-btn" onclick="startOnboarding(true)" id="tour-btn" title="Replay onboarding tour">🧭 Tour</button>
           <div class="user-profile" id="user-email">Loading...</div>
         </div>
       </header>
@@ -139,17 +139,20 @@
         </svg>
       </button>
     </div>
+
     <div class="chat-messages" id="chat-messages">
       <div class="msg bot">
         <div class="msg-label">O.R.C.A AI</div>
         Namaste. I am the O.R.C.A Intelligence Assistant. I can help you analyse crime patterns, look up case details, and generate insights. What would you like to know?
       </div>
     </div>
+
     <div class="chat-suggestions" id="chat-suggestions">
       <button class="suggestion-chip" onclick="sendSuggestion(this)">Active cases summary</button>
       <button class="suggestion-chip" onclick="sendSuggestion(this)">Top crime hotspots</button>
       <button class="suggestion-chip" onclick="sendSuggestion(this)">Critical alerts</button>
     </div>
+
     <div class="chat-input-area">
       <input type="text" id="chat-input" placeholder="Ask about crime data, cases, analytics…" autocomplete="off" />
       <button class="chat-send-btn" id="chat-send-btn" onclick="sendMessage()">
@@ -157,21 +160,6 @@
           <path d="M22 2L11 13M22 2L15 22 11 13 2 9l20-7z"/>
         </svg>
       </button>
-    </div>
-  </div>
-
-  <!-- Onboarding Overlay -->
-  <div class="spotlight-overlay" id="spotlight-overlay" aria-hidden="true">
-    <div class="spotlight-backdrop" id="spotlight-backdrop"></div>
-    <div class="spotlight-tooltip" id="spotlight-tooltip" role="dialog" aria-live="polite">
-      <div class="spotlight-step-label" id="spotlight-step-label">Step 1 of 4</div>
-      <h4 id="spotlight-title">Welcome</h4>
-      <p id="spotlight-text">Let’s quickly walk through your dashboard.</p>
-      <div class="spotlight-actions">
-        <button class="spotlight-skip" id="spotlight-skip-btn">Skip</button>
-        <button class="spotlight-next" id="spotlight-next-btn">Next</button>
-      </div>
-      <div class="spotlight-dots" id="spotlight-dots"></div>
     </div>
   </div>
 
