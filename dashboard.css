@@ -275,6 +275,31 @@ body {
 
 .bubble-tooltip.hidden { display: none; }
 
+.chat-help-btn {
+  width: 26px; height: 26px;
+  border-radius: 50%;
+  background: var(--bg-surface);
+  border: 1.5px solid var(--border);
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  align-self: flex-end;
+  margin-bottom: 2px;
+}
+.chat-help-btn:hover {
+  background: var(--brand-primary);
+  color: #fff;
+  border-color: var(--brand-primary);
+  transform: scale(1.08);
+}
+.chat-bubble-wrapper.is-open .chat-help-btn { display: none; }
+
 /* The button */
 .chat-bubble-btn {
   width: 56px; height: 56px;
@@ -394,8 +419,18 @@ body {
 .chat-panel-header h3 { margin: 0; font-size: 0.95rem; font-weight: 600; }
 .chat-subtitle { font-size: 0.72rem; opacity: 0.75; margin-top: 1px; display: block; }
 
-.chat-close-btn {
+.groq-badge {
+  font-size: 0.65rem;
+  background: rgba(255,255,255,0.18);
+  border-radius: 4px;
+  padding: 2px 6px;
   margin-left: auto;
+  letter-spacing: 0.04em;
+  font-weight: 700;
+}
+
+.chat-close-btn {
+  margin-left: 0.5rem;
   background: rgba(255,255,255,0.15);
   border: none;
   color: white;
@@ -580,11 +615,6 @@ body {
   backdrop-filter: blur(2px);
 }
 
-/* Cutout "hole" over highlighted element — achieved via clip-path */
-.spotlight-backdrop.has-cutout {
-  /* Set via JS */
-}
-
 /* Spotlight tooltip card */
 .spotlight-tooltip {
   position: fixed;
@@ -694,23 +724,35 @@ body {
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 99px; }
 
-.spotlight-tooltip {
-  z-index: 9999 !important;
+/* ══════════════════════════════════════════
+   Onboarding interaction fix (critical)
+   ══════════════════════════════════════════ */
+.spotlight-overlay {
+  z-index: 3000 !important;
   pointer-events: auto !important;
+  overflow: hidden;
+}
+
+.spotlight-backdrop {
+  pointer-events: auto;
+}
+
+.spotlight-tooltip {
+  z-index: 3002 !important;
+  pointer-events: auto !important;
+  position: fixed;
 }
 
 .onboard-ring {
+  z-index: 3001 !important;
   pointer-events: none !important;
 }
 
-.spotlight-overlay {
-  pointer-events: all;
-}
-
-.spotlight-tooltip {
-  z-index: 9999 !important;
-}
-
-.spotlight-overlay {
-  overflow: hidden;
+.spotlight-actions,
+.spotlight-actions button,
+.spotlight-next,
+.spotlight-skip {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 3003;
 }
